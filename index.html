@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Clutch SMP</title>
+  <style>
+    body {
+      background: #121212;
+      color: #eee;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      color: #4caf50;
+      font-size: 2.5rem;
+    }
+    #status {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      padding: 15px;
+      background: #222;
+      border-radius: 8px;
+      display: inline-block;
+      min-width: 300px;
+    }
+    #players {
+      margin-top: 10px;
+    }
+    .copy-btn, .join-btn {
+      margin-top: 10px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      margin: 10px;
+    }
+    .copy-btn:hover, .join-btn:hover {
+      background-color: #45a049;
+    }
+    .notice {
+      font-size: 0.9rem;
+      margin-top: 10px;
+      color: #aaa;
+    }
+    a {
+      color: #4caf50;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Clutch SMP</h1>
+  <p>Server IP: <strong id="server-ip">play.Clutch.com</strong></p>
+  <button class="copy-btn" onclick="copyIP()">Copy IP</button>
+  <button class="join-btn" onclick="location.href='minecraft://?addExternalServer=Clutch SMP|play.Clutch.com'">Join Server</button>
+
+  <div class="notice">Supports both cracked & premium players. Use TLauncher, SKLauncher, or official Minecraft.</div>
+
+  <div id="status">Loading server status...</div>
+  <div id="players"></div>
+
+  <p style="margin-top: 20px;">
+    <a href="https://minecraft.net/download" target="_blank" rel="noopener noreferrer">Download Minecraft</a>
+  </p>
+
+  <script>
+    const ip = "play.Clutch.com"; // Your server IP
+
+    async function fetchServerStatus() {
+      const statusEl = document.getElementById("status");
+      const playersEl = document.getElementById("players");
+
+      try {
+        const res = await fetch(`https://api.mcsrvstat.us/2/${ip}`);
+        const data = await res.json();
+
+        if (!data.online) {
+          statusEl.textContent = "Server is offline or unreachable.";
+          playersEl.textContent = "";
+          return;
+        }
+
+        statusEl.textContent = `✅ Server is ONLINE - Version: ${data.version}`;
+        if (data.players && data.players.online > 0) {
+          playersEl.textContent = `Players online: ${data.players.online} / ${data.players.max}`;
+          if (data.players.list) {
+            playersEl.textContent += `\nPlayers: ${data.players.list.join(', ')}`;
+          }
+        } else {
+          playersEl.textContent = "No players online right now.";
+        }
+      } catch (error) {
+        statusEl.textContent = "Error fetching server status.";
+        playersEl.textContent = "";
+        console.error(error);
+      }
+    }
+
+    function copyIP() {
+      const ipText = document.getElementById("server-ip").textContent;
+      navigator.clipboard.writeText(ipText).then(() => {
+        alert("Server IP copied to clipboard!");
+      });
+    }
+
+    fetchServerStatus();
+    setInterval(fetchServerStatus, 30000);
+  </script>
+</body>
+</html>
+Add My Minecraft server site
